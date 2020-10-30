@@ -23,7 +23,7 @@ Scanner
       <a href="leitura" target="blank">{{leitura}}</a>
     </ion-label>
   </ion-item>
-  <ion-item *ngif="leitura">
+  <ion-item *ngIf="leitura">
     <ion-label position="stacked"></ion-label>
     <ion-input [(ngModel)]="leitura"> </ion-input>
   </ion-item>

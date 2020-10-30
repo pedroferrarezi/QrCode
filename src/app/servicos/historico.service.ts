@@ -14,7 +14,7 @@ export class HistoricoService {
     return this.afs.collection('historicos').add({...historico})
   }
   public getAll() {
-      return this.afs.collection('historico').snapshotChanges();
+      return this.afs.collection('historicos').snapshotChanges();
 
   }
   public update(key: string, historico: Historico) {

@@ -2,6 +2,8 @@ import { Component, ChangeDetectorRef } from '@angular/core';
 import { QRScanner, QRScannerStatus } from '@ionic-native/qr-scanner/ngx';
 import { AlertController, Platform } from '@ionic/angular';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
+import { HistoricoService } from '../servicos/historico.service';
+import { Historico } from '../models/historico';
 
 @Component({
   selector: 'app-tab1',
@@ -24,7 +26,8 @@ export class Tab1Page {
     public alertController: AlertController,
     public  platform: Platform,
     private screenOrientation: ScreenOrientation,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    private historicoService: HistoricoService
 
     ) {
 // set to landscape
@@ -43,7 +46,7 @@ this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
       })
     }
 
-  public lerQrcode() {
+  public async lerQrcode() {
 // Optionally request the permission early
 this.qrScanner.prepare()
   .then((status: QRScannerStatus) => {
@@ -59,7 +62,7 @@ this.footer = document.getElementById('footer') as HTMLElement;
 
         this.qrScanner.show(); // show camera preview
        // start scanning
-       this.leitorQRcode = this.qrScanner.scan().subscribe((text: string) => {
+       this.leitorQRcode = this.qrScanner.scan().subscribe(async(text: string) => {
         
         this.leitura = (text['result']) ? text['result'] : text;
 
@@ -75,6 +78,17 @@ this.footer = document.getElementById('footer') as HTMLElement;
 
          this.verificaLink(this.leitura);
          this.cdRef.detectChanges();
+
+         const historico = new Historico();
+         historico.leitura = this.leitura;
+         historico.dataHora = new Date();
+
+         await this.historicoService.create(historico).then(resposta => {
+           console.log(resposta);
+         }).catch(erro => {
+           this.presentAlert('erro',"erro ao salvar");
+           console.log('erro', erro);
+         });
        });
 
      } else if (status.denied) {
